@@ -21,7 +21,13 @@
 
   <div id="wordInputSection">
     <h2>Enter a word</h2>
-    <input type="password" id="secretWordInput" placeholder="Type a word" autofocus/>
+    <input type="text" 
+           id="secretWordInput" 
+           placeholder="Type a word" 
+           autocomplete="off"
+           style="-webkit-text-security: disc; text-security: disc;"
+           data-lpignore="true"
+           autofocus/>
     <button id="startGame">Start Game</button>
   </div>
 
