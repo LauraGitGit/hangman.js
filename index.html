@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hangman Game</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Game title image -->
+  <img src="Hangman-Title/hangman-title.png" alt="Hangman Title" id="titleImage" />
+  
+  
+  <div id="hangmanVisual">
+    <img id="hangmanImage" src="images/hangman-0.png" alt="Hangman Drawing" />
+  </div>
+
+
+  <div id="wordInputSection">
+    <h2>Enter a word</h2>
+    <input type="password" id="secretWordInput" placeholder="Type a word" autofocus/>
+    <button id="startGame">Start Game</button>
+  </div>
+
+  
+  <div id="game" style="display: none;">
+    <!-- Game control buttons -->
+    <div id="controls">
+      <button id="restartGame">Restart</button>
+      <button id="newGame">New Game</button>
+    </div>
+
+    <!-- Game status display -->
+    <p id="wordDisplay">_ _ _ _ _</p>
+    <p class="status">Wrong guesses: <span id="wrongGuessesDisplay"></span></p>
+    <p class="status">Lives left: <span id="livesDisplay">6</span></p>
+    
+    <div id="keyboard"></div>
+  </div>
+
+ 
+  <script src="script.js"></script>
+</body>
+</html>
