@@ -1,3 +1,17 @@
+// Get a random word from API
+async function getRandomWord() {
+  try {
+    const response = await fetch('https://random-word-api.herokuapp.com/word?length=5');
+    const [word] = await response.json();
+    return word;
+  } catch (error) {
+    console.error('Error fetching word:', error);
+    // Fallback words in case API fails
+    const fallbackWords = ['happy', 'smile', 'dance', 'music', 'light', 'dream', 'beach', 'sunny'];
+    return fallbackWords[Math.floor(Math.random() * fallbackWords.length)];
+  }
+}
+
 let secretWord = "";
 let guessedLetters = [];
 let wrongGuesses = [];
@@ -6,6 +20,7 @@ let gameOver = false;
 
 const wordInput = document.getElementById("secretWordInput");
 const startBtn = document.getElementById("startGame");
+const generateBtn = document.getElementById("generateWord");
 
 const wordDisplay = document.getElementById("wordDisplay");
 const wrongGuessesDisplay = document.getElementById("wrongGuessesDisplay");
@@ -186,5 +201,23 @@ document.getElementById("newGame").addEventListener("click", () => {
   setTimeout(() => {
     wordInput.focus();
   }, 10);
+});
+
+// Add generate word functionality
+generateBtn.addEventListener("click", async () => {
+  generateBtn.disabled = true;
+  generateBtn.textContent = "Generating...";
+  
+  try {
+    const randomWord = await getRandomWord();
+    wordInput.value = randomWord;
+    startBtn.click();
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Failed to generate word. Please try again.');
+  } finally {
+    generateBtn.disabled = false;
+    generateBtn.textContent = "Generate Word";
+  }
 });
 
