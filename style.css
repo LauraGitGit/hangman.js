@@ -89,7 +89,6 @@ h2 {
   padding: 12px 35px;
   font-size: 18px;
   font-family: 'Patrick Hand', cursive;
-  background-color: #1c92ec;
   color: white;
   border: none;
   border-radius: 25px;
@@ -98,7 +97,19 @@ h2 {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-#startGame, #generateWord:hover {
+#generateWord {
+  background-color: #27ae60;
+}
+
+#generateWord:hover {
+  background-color: #1c92ec;
+}
+
+#startGame {
+  background-color: #1c92ec;
+}
+
+#startGame:hover {
   background-color: #27ae60;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
