@@ -1,14 +1,23 @@
 // Get a random word from API
 async function getRandomWord() {
+  // Pick a random length between 3 and 6
+  const length = Math.floor(Math.random() * 4) + 3;
   try {
-    const response = await fetch('https://random-word-api.herokuapp.com/word?length=5');
+    
+    const response = await fetch(`https://random-word-api.vercel.app/api?words=1&length=${length}`);
     const [word] = await response.json();
-    return word;
+    return String(word || '').toLowerCase();
   } catch (error) {
     console.error('Error fetching word:', error);
     // Fallback words in case API fails
-    const fallbackWords = ['happy', 'smile', 'dance', 'music', 'light', 'dream', 'beach', 'sunny'];
-    return fallbackWords[Math.floor(Math.random() * fallbackWords.length)];
+    const fallbackByLength = {
+      3: ['cat', 'dog', 'sun', 'sky', 'ice'],
+      4: ['book', 'tree', 'moon', 'jazz', 'code'],
+      5: ['happy', 'smile', 'dance', 'light', 'beach'],
+      6: ['garden', 'planet', 'kitten', 'silver', 'python']
+    };
+    const pool = fallbackByLength[length] || [...fallbackByLength[3], ...fallbackByLength[4], ...fallbackByLength[5], ...fallbackByLength[6]];
+    return pool[Math.floor(Math.random() * pool.length)];
   }
 }
 
@@ -143,6 +152,7 @@ function disableAllButtons() {
 document.addEventListener("keydown", function (event) {
   const letter = event.key.toLowerCase();
 
+  
   // Only allow a-z, not symbols or already guessed letters
   if (/^[a-z]$/.test(letter)) {
     const button = [...keyboard.querySelectorAll("button")].find(
