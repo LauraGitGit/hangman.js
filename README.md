@@ -1,4 +1,4 @@
-# Hangman Game (JavaScript)
+# Hangman Game
 
 A classic **Hangman** word-guessing game built with **HTML**, **CSS**, and **JavaScript**. You can play with your own word or let the game pick a random word for you.
 
