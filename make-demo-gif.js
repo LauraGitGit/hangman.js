@@ -63,6 +63,22 @@ function downscale(png) {
   return { width: nw, height: nh, data: out };
 }
 
+/** Replace black/dark background pixels with white (GIF background). */
+function blackToWhite(data) {
+  const out = data.slice();
+  for (let i = 0; i < out.length; i += 4) {
+    const r = out[i];
+    const g = out[i + 1];
+    const b = out[i + 2];
+    if (r < 30 && g < 30 && b < 30) {
+      out[i] = 255;
+      out[i + 1] = 255;
+      out[i + 2] = 255;
+    }
+  }
+  return out;
+}
+
 async function main() {
   let width = 0;
   let height = 0;
@@ -78,7 +94,7 @@ async function main() {
     const scaled = downscale(png);
     width = scaled.width;
     height = scaled.height;
-    frames.push(scaled.data);
+    frames.push(blackToWhite(scaled.data));
   }
 
   const gif = new GifEncoder(width, height, { highWaterMark: 10 * 1024 * 1024 });
