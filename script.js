@@ -3,20 +3,26 @@ async function getRandomWord() {
   // Pick a random length between 3 and 6
   const length = Math.floor(Math.random() * 4) + 3;
   try {
-    
-    const response = await fetch(`https://random-word-api.vercel.app/api?words=1&length=${length}`);
+    const response = await fetch(
+      `https://random-word-api.vercel.app/api?words=1&length=${length}`,
+    );
     const [word] = await response.json();
-    return String(word || '').toLowerCase();
+    return String(word || "").toLowerCase();
   } catch (error) {
-    console.error('Error fetching word:', error);
+    console.error("Error fetching word:", error);
     // Fallback words in case API fails
     const fallbackByLength = {
-      3: ['cat', 'dog', 'sun', 'sky', 'ice'],
-      4: ['book', 'tree', 'moon', 'jazz', 'code'],
-      5: ['happy', 'smile', 'dance', 'light', 'beach'],
-      6: ['garden', 'planet', 'kitten', 'silver', 'python']
+      3: ["cat", "dog", "sun", "sky", "ice"],
+      4: ["book", "tree", "moon", "jazz", "code"],
+      5: ["happy", "smile", "dance", "light", "beach"],
+      6: ["garden", "planet", "kitten", "silver", "python"],
     };
-    const pool = fallbackByLength[length] || [...fallbackByLength[3], ...fallbackByLength[4], ...fallbackByLength[5], ...fallbackByLength[6]];
+    const pool = fallbackByLength[length] || [
+      ...fallbackByLength[3],
+      ...fallbackByLength[4],
+      ...fallbackByLength[5],
+      ...fallbackByLength[6],
+    ];
     return pool[Math.floor(Math.random() * pool.length)];
   }
 }
@@ -55,18 +61,17 @@ startBtn.addEventListener("click", () => {
   createKeyboard();
 });
 
-  // Allow pressing Enter to start the game
+// Allow pressing Enter to start the game
 wordInput.addEventListener("keypress", function (event) {
   if (event.key === "Enter") {
     startBtn.click();
   }
 });
 
-
 function updateWordDisplay() {
   const display = secretWord
     .split("")
-    .map(letter => (guessedLetters.includes(letter) ? letter : "_"))
+    .map((letter) => (guessedLetters.includes(letter) ? letter : "_"))
     .join(" ");
   wordDisplay.textContent = display;
 }
@@ -74,7 +79,7 @@ function updateWordDisplay() {
 function createKeyboard() {
   keyboard.innerHTML = "";
   const letters = "abcdefghijklmnopqrstuvwxyz";
-  letters.split("").forEach(letter => {
+  letters.split("").forEach((letter) => {
     const btn = document.createElement("button");
     btn.textContent = letter;
     btn.addEventListener("click", () => handleGuess(letter, btn));
@@ -90,7 +95,6 @@ function updateHangmanImage() {
   const imageIndex = Math.min(stage, 6);
   image.src = `images/hangman-${imageIndex}.png`;
 
-  
   image.style.opacity = 0;
   setTimeout(() => {
     image.style.opacity = 1;
@@ -120,7 +124,7 @@ function handleGuess(letter, btn) {
 function checkGameOver() {
   const display = secretWord
     .split("")
-    .map(letter => (guessedLetters.includes(letter) ? letter : "_"))
+    .map((letter) => (guessedLetters.includes(letter) ? letter : "_"))
     .join("");
 
   if (lives === 0) {
@@ -130,31 +134,29 @@ function checkGameOver() {
     gameOver = true;
   } else if (!display.includes("_")) {
     wordDisplay.textContent = `👏 Nice one! You saved him!`;
-    
+
     // Show win image
     const image = document.getElementById("hangmanImage");
     image.src = "images/Hangman-win.png";
-    
+
     disableAllButtons();
     gameOver = true;
   }
 }
 
-
 function disableAllButtons() {
   const buttons = keyboard.querySelectorAll("button");
-  buttons.forEach(btn => (btn.disabled = true));
+  buttons.forEach((btn) => (btn.disabled = true));
 }
 
 // Allow key presses from keyboard
 document.addEventListener("keydown", function (event) {
   const letter = event.key.toLowerCase();
 
-  
   // Only allow a-z, not symbols or already guessed letters
   if (/^[a-z]$/.test(letter)) {
     const button = [...keyboard.querySelectorAll("button")].find(
-      btn => btn.textContent === letter
+      (btn) => btn.textContent === letter,
     );
     if (button && !button.disabled) {
       button.click(); // simulate click on button
@@ -174,7 +176,7 @@ document.getElementById("restartGame").addEventListener("click", () => {
   createKeyboard();
   wrongGuessesDisplay.textContent = "";
   livesDisplay.textContent = lives;
-  
+
   // Reset hangman image
   const image = document.getElementById("hangmanImage");
   image.src = "images/hangman-0.png";
@@ -182,7 +184,6 @@ document.getElementById("restartGame").addEventListener("click", () => {
 
 // Start new game (enter new word)
 document.getElementById("newGame").addEventListener("click", () => {
-  
   // Reset game state
   guessedLetters = [];
   wrongGuesses = [];
@@ -200,12 +201,11 @@ document.getElementById("newGame").addEventListener("click", () => {
   wordInput.value = "";
   document.getElementById("game").style.display = "none";
   document.getElementById("wordInputSection").style.display = "flex";
-  
+
   // Reset hangman image
   const image = document.getElementById("hangmanImage");
   image.src = "images/hangman-0.png";
-  
-  
+
   setTimeout(() => {
     wordInput.focus();
   }, 10);
@@ -215,17 +215,16 @@ document.getElementById("newGame").addEventListener("click", () => {
 generateBtn.addEventListener("click", async () => {
   generateBtn.disabled = true;
   generateBtn.textContent = "Generating...";
-  
+
   try {
     const randomWord = await getRandomWord();
     wordInput.value = randomWord;
     startBtn.click();
   } catch (error) {
-    console.error('Error:', error);
-    alert('Failed to generate word. Please try again.');
+    console.error("Error:", error);
+    alert("Failed to generate word. Please try again.");
   } finally {
     generateBtn.disabled = false;
     generateBtn.textContent = "Generate Word";
   }
 });
-
