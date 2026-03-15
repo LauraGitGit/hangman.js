@@ -13,6 +13,9 @@ const { PNG } = require('pngjs');
 const IMGDIR = path.join(__dirname, 'images');
 const OUT_PATH = path.join(IMGDIR, 'demo.gif');
 
+// Smaller size = smaller file. 320 is a good balance for README demos.
+const MAX_SIZE = 320;
+
 const frameFiles = [
   'hangman-0.png',
   'hangman-1.png',
@@ -34,6 +37,32 @@ function readPng(filePath) {
   });
 }
 
+/** Downscale RGBA buffer to fit within MAX_SIZE, keep aspect ratio. */
+function downscale(png) {
+  const w = png.width;
+  const h = png.height;
+  if (w <= MAX_SIZE && h <= MAX_SIZE) {
+    return { width: w, height: h, data: Array.from(png.data) };
+  }
+  const scale = Math.min(MAX_SIZE / w, MAX_SIZE / h);
+  const nw = Math.round(w * scale);
+  const nh = Math.round(h * scale);
+  const out = new Array(nw * nh * 4);
+  for (let y = 0; y < nh; y++) {
+    for (let x = 0; x < nw; x++) {
+      const srcX = Math.floor((x / nw) * w);
+      const srcY = Math.floor((y / nh) * h);
+      const srcI = (srcY * w + srcX) * 4;
+      const dstI = (y * nw + x) * 4;
+      out[dstI] = png.data[srcI];
+      out[dstI + 1] = png.data[srcI + 1];
+      out[dstI + 2] = png.data[srcI + 2];
+      out[dstI + 3] = png.data[srcI + 3];
+    }
+  }
+  return { width: nw, height: nh, data: out };
+}
+
 async function main() {
   let width = 0;
   let height = 0;
@@ -46,16 +75,16 @@ async function main() {
       process.exit(1);
     }
     const png = await readPng(filePath);
-    width = png.width;
-    height = png.height;
-    // gif-encoder expects an Array of RGBA (r, g, b, a, r, g, b, a, ...)
-    frames.push(Array.from(png.data));
+    const scaled = downscale(png);
+    width = scaled.width;
+    height = scaled.height;
+    frames.push(scaled.data);
   }
 
   const gif = new GifEncoder(width, height, { highWaterMark: 10 * 1024 * 1024 });
   gif.setDelay(1000);
   gif.setRepeat(0);
-  gif.setQuality(10);
+  gif.setQuality(20);
 
   const out = fs.createWriteStream(OUT_PATH);
   gif.pipe(out);

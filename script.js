@@ -86,8 +86,8 @@ function updateHangmanImage() {
   const image = document.getElementById("hangmanImage");
   const stage = wrongGuesses.length;
 
-  // Cap stage (current stage :8)
-  const imageIndex = Math.min(stage, 8);
+  // Only hangman-0.png through hangman-6.png exist for the losing stages
+  const imageIndex = Math.min(stage, 6);
   image.src = `images/hangman-${imageIndex}.png`;
 
   
@@ -98,22 +98,20 @@ function updateHangmanImage() {
 }
 
 function handleGuess(letter, btn) {
-    btn.disabled = true;
+  btn.disabled = true;
   if (gameOver) return;
- btn.disabled = true;
 
-
-if (secretWord.includes(letter)) {
-  guessedLetters.push(letter);
-  btn.style.backgroundColor = "green"; // Correct guess
-} else {
-  wrongGuesses.push(letter);
-  lives--;
- updateHangmanImage();
-  wrongGuessesDisplay.textContent = wrongGuesses.join(" ");
-  livesDisplay.textContent = lives;
-  btn.style.backgroundColor = "darkRed"; // Wrong guess
-}
+  if (secretWord.includes(letter)) {
+    guessedLetters.push(letter);
+    btn.style.backgroundColor = "green"; // Correct guess
+  } else {
+    wrongGuesses.push(letter);
+    lives--;
+    updateHangmanImage();
+    wrongGuessesDisplay.textContent = wrongGuesses.join(" ");
+    livesDisplay.textContent = lives;
+    btn.style.backgroundColor = "darkRed"; // Wrong guess
+  }
 
   updateWordDisplay();
   checkGameOver();
