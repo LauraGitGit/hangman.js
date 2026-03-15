@@ -1,0 +1,12 @@
+{
+  "name": "hangman-in-javascript",
+  "version": "1.0.0",
+  "description": "Classic Hangman word game in HTML, CSS, and JavaScript",
+  "scripts": {
+    "make-demo-gif": "node make-demo-gif.js"
+  },
+  "devDependencies": {
+    "gif-encoder": "^0.7.2",
+    "pngjs": "^7.0.0"
+  }
+}
