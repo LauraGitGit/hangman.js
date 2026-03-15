@@ -13,8 +13,8 @@ const { PNG } = require('pngjs');
 const IMGDIR = path.join(__dirname, 'images');
 const OUT_PATH = path.join(IMGDIR, 'demo.gif');
 
-// Smaller size = smaller file. 320 is a good balance for README demos.
-const MAX_SIZE = 320;
+// Output size: larger = sharper GIF, bigger file. 640 keeps the drawing clear.
+const MAX_SIZE = 640;
 
 const frameFiles = [
   'hangman-0.png',
@@ -37,7 +37,29 @@ function readPng(filePath) {
   });
 }
 
-/** Downscale RGBA buffer to fit within MAX_SIZE, keep aspect ratio. */
+/** Sample RGBA at (fx, fy) with bilinear interpolation. */
+function sample(png, fx, fy) {
+  const w = png.width;
+  const h = png.height;
+  const x0 = Math.min(Math.floor(fx), w - 1);
+  const y0 = Math.min(Math.floor(fy), h - 1);
+  const x1 = Math.min(x0 + 1, w - 1);
+  const y1 = Math.min(y0 + 1, h - 1);
+  const tx = fx - x0;
+  const ty = fy - y0;
+  const i = (i, j) => ((j * w + i) * 4);
+  const r = (1 - tx) * (1 - ty) * png.data[i(x0, y0)] + tx * (1 - ty) * png.data[i(x1, y0)] +
+    (1 - tx) * ty * png.data[i(x0, y1)] + tx * ty * png.data[i(x1, y1)];
+  const g = (1 - tx) * (1 - ty) * png.data[i(x0, y0) + 1] + tx * (1 - ty) * png.data[i(x1, y0) + 1] +
+    (1 - tx) * ty * png.data[i(x0, y1) + 1] + tx * ty * png.data[i(x1, y1) + 1];
+  const b = (1 - tx) * (1 - ty) * png.data[i(x0, y0) + 2] + tx * (1 - ty) * png.data[i(x1, y0) + 2] +
+    (1 - tx) * ty * png.data[i(x0, y1) + 2] + tx * ty * png.data[i(x1, y1) + 2];
+  const a = (1 - tx) * (1 - ty) * png.data[i(x0, y0) + 3] + tx * (1 - ty) * png.data[i(x1, y0) + 3] +
+    (1 - tx) * ty * png.data[i(x0, y1) + 3] + tx * ty * png.data[i(x1, y1) + 3];
+  return [Math.round(r), Math.round(g), Math.round(b), Math.round(a)];
+}
+
+/** Downscale RGBA buffer to fit within MAX_SIZE, keep aspect ratio. Uses bilinear for smoother lines. */
 function downscale(png) {
   const w = png.width;
   const h = png.height;
@@ -50,14 +72,14 @@ function downscale(png) {
   const out = new Array(nw * nh * 4);
   for (let y = 0; y < nh; y++) {
     for (let x = 0; x < nw; x++) {
-      const srcX = Math.floor((x / nw) * w);
-      const srcY = Math.floor((y / nh) * h);
-      const srcI = (srcY * w + srcX) * 4;
+      const srcX = (x + 0.5) / nw * w - 0.5;
+      const srcY = (y + 0.5) / nh * h - 0.5;
+      const [r, g, b, a] = sample(png, srcX, srcY);
       const dstI = (y * nw + x) * 4;
-      out[dstI] = png.data[srcI];
-      out[dstI + 1] = png.data[srcI + 1];
-      out[dstI + 2] = png.data[srcI + 2];
-      out[dstI + 3] = png.data[srcI + 3];
+      out[dstI] = r;
+      out[dstI + 1] = g;
+      out[dstI + 2] = b;
+      out[dstI + 3] = a;
     }
   }
   return { width: nw, height: nh, data: out };
@@ -100,7 +122,7 @@ async function main() {
   const gif = new GifEncoder(width, height, { highWaterMark: 10 * 1024 * 1024 });
   gif.setDelay(1000);
   gif.setRepeat(0);
-  gif.setQuality(20);
+  gif.setQuality(10);
 
   const out = fs.createWriteStream(OUT_PATH);
   gif.pipe(out);
