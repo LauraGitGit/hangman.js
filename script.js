@@ -1,4 +1,3 @@
-// Get a random word from API
 async function getRandomWord() {
   // Pick a random length between 3 and 6
   const length = Math.floor(Math.random() * 4) + 3;
@@ -10,7 +9,7 @@ async function getRandomWord() {
     return String(word || "").toLowerCase();
   } catch (error) {
     console.error("Error fetching word:", error);
-    // Fallback words in case API fails
+    // Fallback words
     const fallbackByLength = {
       3: ["cat", "dog", "sun", "sky", "ice"],
       4: ["book", "tree", "moon", "jazz", "code"],
@@ -107,14 +106,14 @@ function handleGuess(letter, btn) {
 
   if (secretWord.includes(letter)) {
     guessedLetters.push(letter);
-    btn.style.backgroundColor = "green"; // Correct guess
+    btn.style.backgroundColor = "green";
   } else {
     wrongGuesses.push(letter);
     lives--;
     updateHangmanImage();
     wrongGuessesDisplay.textContent = wrongGuesses.join(" ");
     livesDisplay.textContent = lives;
-    btn.style.backgroundColor = "darkRed"; // Wrong guess
+    btn.style.backgroundColor = "darkRed";
   }
 
   updateWordDisplay();
@@ -153,56 +152,47 @@ function disableAllButtons() {
 document.addEventListener("keydown", function (event) {
   const letter = event.key.toLowerCase();
 
-  // Only allow a-z, not symbols or already guessed letters
   if (/^[a-z]$/.test(letter)) {
     const button = [...keyboard.querySelectorAll("button")].find(
       (btn) => btn.textContent === letter,
     );
     if (button && !button.disabled) {
-      button.click(); // simulate click on button
+      button.click();
     }
   }
 });
 
-// Restart game with same word
 document.getElementById("restartGame").addEventListener("click", () => {
   guessedLetters = [];
   wrongGuesses = [];
   lives = 6;
   gameOver = false;
 
-  // Reset displays
   updateWordDisplay();
   createKeyboard();
   wrongGuessesDisplay.textContent = "";
   livesDisplay.textContent = lives;
 
-  // Reset hangman image
   const image = document.getElementById("hangmanImage");
   image.src = "images/hangman-0.png";
 });
 
-// Start new game (enter new word)
 document.getElementById("newGame").addEventListener("click", () => {
-  // Reset game state
   guessedLetters = [];
   wrongGuesses = [];
   lives = 6;
   gameOver = false;
   secretWord = "";
 
-  // Reset displays
   wrongGuessesDisplay.textContent = "";
   livesDisplay.textContent = lives;
   wordDisplay.textContent = "";
   keyboard.innerHTML = "";
 
-  // Reset word input section
   wordInput.value = "";
   document.getElementById("game").style.display = "none";
   document.getElementById("wordInputSection").style.display = "flex";
 
-  // Reset hangman image
   const image = document.getElementById("hangmanImage");
   image.src = "images/hangman-0.png";
 

@@ -1,12 +1,21 @@
 # Hangman Game
 
-A classic **Hangman** word-guessing game built with **HTML**, **CSS**, and **JavaScript**. You can play with your own word or let the game pick a random word for you.
+A classic **Hangman** word-guessing game built with **HTML**, **CSS**, and **JavaScript**. Multi-player: make a word and let friend take a guess. Solo: let the game pick a random word for you.
+
+---
+
+## Work in Progress
+
+I am currently working on:
+
+- Polishing the front-end UI to improve layout.
+- Adding more features.
 
 ---
 
 ## Demo
 
-The game shows a simple gallows and stick figure. Each wrong guess adds another part to the figure. If you guess the word in time, you see a win screen; if you run out of lives, the figure is complete and the game is over.
+The game shows a simple hand-drawn gallows and stick figure. Each wrong guess adds another part to the figure. If you guess the word in time, you see a win screen; if you run out of lives, the figure is complete and the game is over.
 
 ---
 
